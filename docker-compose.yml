@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  casepro:
+    build:
+      context: .
+      args:
+        CASEPRO_VERSION: v1.3.13
+    volumes:
+      - static_files:/casepro/sitestatic
+    depends_on:
+      - redis
+      - postgresql
+    env_file: casepro.env
+    command: casepro
+  celery:
+    build:
+      context: .
+      args:
+        CASEPRO_VERSION: v1.3.13
+    depends_on:
+      - casepro
+    links:
+      - redis
+      - postgresql
+    env_file: casepro.env
+    environment:
+      - MANAGEPY_MIGRATE=off
+      - MANAGEPY_COLLECTSTATIC=off
+      - MANAGEPY_COMPRESS=off
+    command: celery
+  celery-beat:
+    build:
+      context: .
+      args:
+        CASEPRO_VERSION: v1.3.13
+    depends_on:
+      - casepro
+    links:
+      - redis
+      - postgresql
+    env_file: casepro.env
+    environment:
+      - MANAGEPY_MIGRATE=off
+      - MANAGEPY_COLLECTSTATIC=off
+      - MANAGEPY_COMPRESS=off
+    command: celery-beat
+  nginx:
+    build: ./nginx/
+    ports:
+      - 8000:80
+    volumes:
+      - static_files:/www/sitestatic
+    links:
+      - casepro
+  redis:
+    image: redis:alpine
+  postgresql:
+    image: postgres:10-alpine
+    volumes:
+      - pg_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=casepro
+
+volumes:
+  pg_data:
+  static_files:
