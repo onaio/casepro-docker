@@ -1,4 +1,2 @@
--r /casepro/pip-freeze.txt
-
 # pip packages not in requirements files
 uwsgi

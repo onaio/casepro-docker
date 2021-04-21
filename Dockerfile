@@ -14,7 +14,17 @@ ENV CASEPRO_VERSION=${CASEPRO_VERSION} \
   PYTHONFAULTHANDLER=1 \
   PYTHONUNBUFFERED=1 \
   PYTHONHASHSEED=random \
-  PYTHONDONTWRITEBYTECODE=1
+  PYTHONDONTWRITEBYTECODE=1 \
+  # pip:
+  PIP_NO_CACHE_DIR=off \
+  PIP_DISABLE_PIP_VERSION_CHECK=on \
+  PIP_DEFAULT_TIMEOUT=100 \
+  # poetry:
+  POETRY_VERSION=1.1.5 \
+  POETRY_NO_INTERACTION=1 \
+  POETRY_VIRTUALENVS_CREATE=false \
+  POETRY_CACHE_DIR='/var/cache/pypoetry' \
+  PATH="$PATH:/root/.poetry/bin"
 
 # Install run deps:
 RUN set -ex \
@@ -42,11 +52,16 @@ COPY requirements.txt /requirements.txt
 RUN set -ex \
   && BUILD_DEPS=" \
     build-essential \
+    curl \
     libpq-dev \
   " \
   && apt-get update \
   && apt-get install -y --no-install-recommends $BUILD_DEPS \
   && pip install --no-cache-dir -r /requirements.txt \
+  # install poetry
+  && curl -sSL 'https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py' | python \
+  && poetry --version \
+  && poetry install --no-dev \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $BUILD_DEPS \
   && rm -rf /var/lib/apt/lists/*
 
