@@ -5,7 +5,7 @@ services:
     build:
       context: .
       args:
-        CASEPRO_VERSION: v1.3.13
+        CASEPRO_VERSION: v1.4.3
     volumes:
       - static_files:/casepro/sitestatic
     depends_on:
@@ -17,7 +17,7 @@ services:
     build:
       context: .
       args:
-        CASEPRO_VERSION: v1.3.13
+        CASEPRO_VERSION: v1.4.3
     depends_on:
       - casepro
     links:
@@ -33,7 +33,7 @@ services:
     build:
       context: .
       args:
-        CASEPRO_VERSION: v1.3.13
+        CASEPRO_VERSION: v1.4.3
     depends_on:
       - casepro
     links:
