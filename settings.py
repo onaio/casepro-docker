@@ -52,3 +52,8 @@ CACHES = {
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
     }
 }
+
+# set COMPRESS_CSS_HASHING_METHOD to 'content' so as to leverage multiple servers to
+# serve content
+# https://django-compressor.readthedocs.io/en/stable/settings/#django.conf.settings.COMPRESS_CSS_HASHING_METHOD
+COMPRESS_CSS_HASHING_METHOD = 'content'
